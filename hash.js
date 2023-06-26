@@ -1,6 +1,6 @@
 import { createHash } from 'crypto';
 import { readFile } from 'fs/promises';
-import { resolvePath } from './fileSystem';
+import { resolvePath } from './fileSystem.js';
 
 export const calculateHash = async (state, args) => {
   if (args.length !== 1) {

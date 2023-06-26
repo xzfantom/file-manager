@@ -10,7 +10,7 @@ const getCpuInfo = () => {
     const { model, speed } = cpu;
     return { Model: model, 'Clock rate': `${Math.floor((speed * 100) / 1024) / 100}Ghz` };
   });
-  return { 'Amount of CPUS': cpuInfo.length, CPUS: cpuInfo };
+  return { Amount: cpuInfo.length, CPUS: cpuInfo };
 };
 
 export const parseOsCommand = (command) => {
@@ -25,7 +25,9 @@ export const parseOsCommand = (command) => {
       console.log(os.EOL);
       break;
     case '--cpus':
-      console.log(getCpuInfo());
+      const { Amount, CPUS } = getCpuInfo();
+      console.log(`Amount: ${Amount}`);
+      console.table(CPUS);
       break;
     case '--architecture':
       console.log(os.arch());

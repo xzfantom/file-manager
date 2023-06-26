@@ -76,7 +76,7 @@ while (true) {
         await decompress(state, arg);
         break;
       default:
-        throw new Error(`Command ${command[0]} not found`);
+        throw new Error(`Invalid input`);
     }
   } catch (e) {
     console.log(e.message);

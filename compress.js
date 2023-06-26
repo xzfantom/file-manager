@@ -1,6 +1,7 @@
 import { createReadStream, createWriteStream } from 'fs';
-import { pipeline } from 'stream';
+import { pipeline } from 'stream/promises';
 import { createBrotliCompress, createBrotliDecompress } from 'zlib';
+import { resolvePath } from './fileSystem.js';
 
 export const compress = async (state, arg) => {
   if (arg.length !== 2) {
@@ -14,11 +15,11 @@ export const compress = async (state, arg) => {
   const input = createReadStream(inputPath);
   const output = createWriteStream(outputPath);
 
-  pipeline(input, comp, output, (err) => {
-    if (err) {
-      throw err;
-    }
-  });
+  try {
+    await pipeline(input, comp, output);
+  } catch (error) {
+    throw new Error('Operation failed');
+  }
 };
 
 export const decompress = async (state, arg) => {
@@ -33,9 +34,9 @@ export const decompress = async (state, arg) => {
   const input = createReadStream(inputPath);
   const output = createWriteStream(outputPath);
 
-  pipeline(input, decomp, output, (err) => {
-    if (err) {
-      throw err;
-    }
-  });
+  try {
+    await pipeline(input, decomp, output);
+  } catch (error) {
+    throw new Error('Operation failed');
+  }
 };

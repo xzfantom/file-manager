@@ -1,8 +1,12 @@
 import { readdir, rename, writeFile, stat, unlink } from 'fs/promises';
-import { resolve } from 'path';
+import { resolve, parse } from 'path';
 
-export const resolvePath = (state, path) => {
-  return resolve(state['currentDirectory'], path);
+export const resolvePath = (...args) => {
+  return resolve(...args);
+};
+
+export const getFileName = (path) => {
+  return parse(path).base;
 };
 
 export const changeDirectory = async (state, params) => {
@@ -19,7 +23,7 @@ export const changeDirectory = async (state, params) => {
       throw new Error('Invalid input');
     }
   } catch (error) {
-    throw new Error('Invalid input');
+    throw new Error('Operation failed');
   }
 
   state['currentDirectory'] = newPath;
@@ -32,11 +36,16 @@ export const listDirectory = async (state, params) => {
 
   const directory = state['currentDirectory'];
   try {
-    const files = await readdir(directory);
-
-    console.table(files);
+    const files = await readdir(directory, { withFileTypes: true });
+    const result = files.map((file) => {
+      if (file.isDirectory()) {
+        return { name: file.name, type: 'directory' };
+      }
+      return { name: file.name, type: 'file' };
+    });
+    console.table(result);
   } catch (error) {
-    throw new Error('Invalid input');
+    throw new Error('Operation failed');
   }
 };
 
@@ -50,7 +59,7 @@ export const createFile = async (state, params) => {
   try {
     await writeFile(filePath, '');
   } catch (error) {
-    throw new Error('Invalid input');
+    throw new Error('Operation failed');
   }
 };
 
@@ -65,7 +74,7 @@ export const renameFile = async (state, params) => {
   try {
     await rename(oldPath, newPath);
   } catch (error) {
-    throw new Error('Invalid input');
+    throw new Error('Operation failed');
   }
 };
 
@@ -79,6 +88,6 @@ export const removeFile = async (state, params) => {
   try {
     await unlink(filePath);
   } catch (error) {
-    throw new Error('Invalid input');
+    throw new Error('Operation failed');
   }
 };
